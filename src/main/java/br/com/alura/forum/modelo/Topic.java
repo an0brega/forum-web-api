@@ -1,27 +1,36 @@
 package br.com.alura.forum.modelo;
 
-import br.com.alura.forum.enums.StatusTopico;
+import br.com.alura.forum.enums.TopicStatus;
 
+import jakarta.persistence.* ;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "TOPIC")
 public class Topic {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String title;
 	private String message;
 	private LocalDateTime creationDate = LocalDateTime.now();
-	private StatusTopico status = StatusTopico.NAO_RESPONDIDO;
-	private Usuario author;
-	private Curso course;
-	private List<Resposta> answers = new ArrayList<>();
 
-	public Topic(String title, String message, Curso curso) {
-		this.title = title;
-		this.message = message;
-		this.course = curso;
-	}
+	@Enumerated(EnumType.STRING) //Sos the hibernate will salve the name of the enum constant
+	private TopicStatus status = TopicStatus.UNANSWERED;
+
+	@ManyToOne
+	private Users author;
+
+	@ManyToOne
+	private Course course;
+
+	@OneToMany(mappedBy = "topic")
+	private List<Answer> answers = new ArrayList<>();
+
+	public Topic(){}
 
 	@Override
 	public int hashCode() {
@@ -80,35 +89,35 @@ public class Topic {
 		this.creationDate = creationDate;
 	}
 
-	public StatusTopico getStatus() {
+	public TopicStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(StatusTopico status) {
+	public void setStatus(TopicStatus status) {
 		this.status = status;
 	}
 
-	public Usuario getAuthor() {
+	public Users getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(Usuario author) {
+	public void setAuthor(Users author) {
 		this.author = author;
 	}
 
-	public Curso getCourse() {
+	public Course getCourse() {
 		return course;
 	}
 
-	public void setCourse(Curso course) {
+	public void setCourse(Course course) {
 		this.course = course;
 	}
 
-	public List<Resposta> getAnswers() {
+	public List<Answer> getAnswers() {
 		return answers;
 	}
 
-	public void setAnswers(List<Resposta> answers) {
+	public void setAnswers(List<Answer> answers) {
 		this.answers = answers;
 	}
 
