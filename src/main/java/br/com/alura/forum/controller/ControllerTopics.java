@@ -5,6 +5,7 @@ import br.com.alura.forum.controller.form.TopicForm;
 import br.com.alura.forum.modelo.Topic;
 import br.com.alura.forum.repository.CourseRepository;
 import br.com.alura.forum.repository.RepositoryTopic;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,10 @@ public class ControllerTopics {
     }
 
     @PostMapping
-    public ResponseEntity<TopicDto> register(@RequestBody TopicForm form, UriComponentsBuilder uriBuilder){ //@RequestBody means that the request will come not by the URL, but by the body
+    public ResponseEntity<TopicDto> register(@RequestBody @Valid TopicForm form, UriComponentsBuilder uriBuilder){
+        //@RequestBody means that the request will come not by the URL, but by the body
+        //@Valid will force the object to be validated using the bean validations inside the TopicForm class
+
         Topic topic = form.convertTo(courseRepository);
         repositoryTopic.save(topic);
 
