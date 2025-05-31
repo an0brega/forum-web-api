@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController // assumes that every method has the @ResponseBody by default
 @RequestMapping("/topics") // all requests do /topics will get here
@@ -60,25 +61,37 @@ public class ControllerTopics {
     }
 
     @GetMapping("/{id}")
-    public DetailsTopicDto detail(@PathVariable("id") Long code){ //@PathVariable -> means that the id is a part of the URL
-        Topic topic = repositoryTopic.getOne(code);
+    public ResponseEntity<DetailsTopicDto> detail(@PathVariable("id") Long code){ //@PathVariable -> means that the id is a part of the URL
+        Optional<Topic> topic = repositoryTopic.findById(code);
+        if (topic.isPresent())
+            return ResponseEntity.ok(new DetailsTopicDto(topic.get())); // -> ".get()" gets the Topic and not Optional class
 
-        return new DetailsTopicDto(topic);
+        return ResponseEntity.notFound().build();
+
     }
 
     @PutMapping("/{id}") // PUT - overwrite the info. PATCH - update the info
     @Transactional // -> says to spring that the change should be updated in the database
     public ResponseEntity<TopicDto> update(@PathVariable("id") Long code, @RequestBody @Valid UpdateTopicForm form){
-        Topic topic = form.update(code, repositoryTopic);
+        Optional<Topic> optionalTopic = repositoryTopic.findById(code);
+        if (optionalTopic.isPresent()) {
+            Topic topic = form.update(code, repositoryTopic);
+            return ResponseEntity.ok(new TopicDto(optionalTopic.get()));
+        }
 
-        return ResponseEntity.ok(new TopicDto(topic));
+        return ResponseEntity.notFound().build();
+
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<?> remove(@PathVariable("id") Long code){
-        repositoryTopic.deleteById(code);
+        Optional<Topic> optionalTopic = repositoryTopic.findById(code);
+        if (optionalTopic.isPresent()) {
+            repositoryTopic.deleteById(code);
+            return ResponseEntity.ok().build();
+        }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.notFound().build();
     }
 }
