@@ -21,7 +21,7 @@ public class Topic {
 	@Enumerated(EnumType.STRING) //Sos the hibernate will salve the name of the enum constant
 	private TopicStatus status = TopicStatus.UNANSWERED;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Users author;
 
 	@ManyToOne

@@ -1,10 +1,13 @@
 package br.com.alura.forum.controller;
 
+import br.com.alura.forum.controller.dto.DetailsTopicDto;
 import br.com.alura.forum.controller.dto.TopicDto;
 import br.com.alura.forum.controller.form.TopicForm;
+import br.com.alura.forum.controller.form.UpdateTopicForm;
 import br.com.alura.forum.modelo.Topic;
 import br.com.alura.forum.repository.CourseRepository;
 import br.com.alura.forum.repository.RepositoryTopic;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +35,7 @@ public class ControllerTopics {
         }
         else{
             List<Topic> topics = repositoryTopic.findByCourse_Name(courseName);
+
             return TopicDto.convertTo(topics);
         }
 
@@ -39,6 +43,7 @@ public class ControllerTopics {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<TopicDto> register(@RequestBody @Valid TopicForm form, UriComponentsBuilder uriBuilder){
         //@RequestBody means that the request will come not by the URL, but by the body
         //@Valid will force the object to be validated using the bean validations inside the TopicForm class
@@ -52,5 +57,28 @@ public class ControllerTopics {
         // uriBuilder is a helper provided by Spring to dynamically construct URLs.
 
         return ResponseEntity.created(uri).body(new TopicDto(topic));
+    }
+
+    @GetMapping("/{id}")
+    public DetailsTopicDto detail(@PathVariable("id") Long code){ //@PathVariable -> means that the id is a part of the URL
+        Topic topic = repositoryTopic.getOne(code);
+
+        return new DetailsTopicDto(topic);
+    }
+
+    @PutMapping("/{id}") // PUT - overwrite the info. PATCH - update the info
+    @Transactional // -> says to spring that the change should be updated in the database
+    public ResponseEntity<TopicDto> update(@PathVariable("id") Long code, @RequestBody @Valid UpdateTopicForm form){
+        Topic topic = form.update(code, repositoryTopic);
+
+        return ResponseEntity.ok(new TopicDto(topic));
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> remove(@PathVariable("id") Long code){
+        repositoryTopic.deleteById(code);
+
+        return ResponseEntity.ok().build();
     }
 }

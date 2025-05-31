@@ -20,7 +20,6 @@ public class TopicDto {
         this.title = topic.getTitle();
         this.message = topic.getMessage();
         this.creationDate = topic.getCreationDate();
-
     }
 
     public Long getId() {
