@@ -3,10 +3,13 @@ package br.com.alura.forum.modelo;
 import br.com.alura.forum.enums.TopicStatus;
 
 import jakarta.persistence.* ;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@SpringBootApplication
 @Entity
 @Table(name = "TOPIC")
 public class Topic {

@@ -75,6 +75,5 @@ src/
 ---
 
 ## To be added:
-- Change the implementation from the H2 database to the PostgreSQL.
 
 ---

@@ -1,9 +1,11 @@
 package br.com.alura.forum.modelo;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "ANSWER")
 public class Answer {
 
 	@Id

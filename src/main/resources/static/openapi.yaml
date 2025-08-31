@@ -1,0 +1,166 @@
+openapi: 3.0.1
+info:
+  title: Forum API
+  description: API for managing forum topics
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /topics:
+    get:
+      summary: List all topics
+      description: Returns all topics or filters them by course name.
+      parameters:
+        - in: query
+          name: courseName
+          schema:
+            type: string
+          required: false
+          description: Course name to filter topics
+      responses:
+        '200':
+          description: List of topics successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicDto'
+
+    post:
+      summary: Register a new topic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopicForm'
+      responses:
+        '201':
+          description: Topic successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicDto'
+
+  /topics/{id}:
+    get:
+      summary: Get topic details
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Topic details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailsTopicDto'
+        '404':
+          description: Topic not found
+
+    put:
+      summary: Update a topic
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTopicForm'
+      responses:
+        '200':
+          description: Topic successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicDto'
+        '404':
+          description: Topic not found
+
+    delete:
+      summary: Delete a topic
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Topic successfully deleted
+        '404':
+          description: Topic not found
+
+components:
+  schemas:
+    TopicDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        message:
+          type: string
+        courseName:
+          type: string
+
+    DetailsTopicDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        message:
+          type: string
+        authorName:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        responses:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              message:
+                type: string
+              authorName:
+                type: string
+
+    TopicForm:
+      type: object
+      properties:
+        title:
+          type: string
+        message:
+          type: string
+        courseName:
+          type: string
+      required:
+        - title
+        - message
+        - courseName
+
+    UpdateTopicForm:
+      type: object
+      properties:
+        title:
+          type: string
+        message:
+          type: string
+      required:
+        - title
+        - message

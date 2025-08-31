@@ -23,16 +23,20 @@ public class ErrorValidationHandler {
     @ResponseStatus(code = HttpStatus.BAD_REQUEST) // -> the error code that will be returned
     @ExceptionHandler(MethodArgumentNotValidException.class) // -> says to SpringBoot that this method will handle exceptions
     public List<FormErrorDto> Handler(MethodArgumentNotValidException exception) {
-        List<FormErrorDto> dto = new ArrayList<>();
+        List<FormErrorDto> errorDto = new ArrayList<>();
 
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
         fieldErrors.forEach(e -> {
 
             String message = messageSource.getMessage(e, LocaleContextHolder.getLocale());
             FormErrorDto error = new FormErrorDto(e.getField(), message);
-            dto.add(error);
+            errorDto.add(error);
         });
 
-        return dto;
+        return errorDto;
+    }
+
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 }

@@ -1,7 +1,9 @@
 package br.com.alura.forum.modelo;
 
 import jakarta.persistence.*;
-@Entity //indicates that this class is a JPA entity and creates a TABLE in database
+
+@Entity
+@Table(name = "USERS")
 public class Users {
 
 	@Id
